@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("api/cart")
+@RequestMapping("shopping-cart/cart")
 public class CartController {
 
     private final CartService cartService;

@@ -3,7 +3,7 @@ package com.shopping.cart.mapper;
 import com.shopping.cart.dto.*;
 import com.shopping.cart.entity.Cart;
 import com.shopping.cart.entity.CartItem;
-import com.shopping.cart.entity.Person;
+import com.shopping.cart.entity.User;
 import com.shopping.cart.entity.Product;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +25,10 @@ public interface Mapper {
 
     CartDTO cartToCartDTO(Cart cart);
 
-    PersonGetDTO personToPersonGetDto(Person person);
+    UserGetDTO personToPersonGetDto(User user);
 
-    Person personPostDTOToPerson(PersonPostDTO postDTO);
+    User personPostDTOToPerson(UserPostDTO postDTO);
 
-    List<PersonGetDTO> personsToPersonGetDTOs(List<Person> personList);
+    List<UserGetDTO> personsToPersonGetDTOs(List<User> userList);
 
 }

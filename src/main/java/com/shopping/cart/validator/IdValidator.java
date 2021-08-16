@@ -1,7 +1,7 @@
 package com.shopping.cart.validator;
 
 import com.shopping.cart.exception.exceptions.IdException;
-import com.shopping.cart.repository.PersonRepository;
+import com.shopping.cart.repository.UserRepository;
 import com.shopping.cart.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,12 +11,12 @@ public class IdValidator {
 
     private final ProductRepository productRepository;
 
-    private final PersonRepository personRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public IdValidator(ProductRepository productRepository, PersonRepository personRepository) {
+    public IdValidator(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
-        this.personRepository = personRepository;
+        this.userRepository = userRepository;
     }
 
     public void validProductId(Long productId) {
@@ -28,7 +28,7 @@ public class IdValidator {
 
     public void validPersonId(Long personId) {
         validId(personId);
-        if (!personRepository.existsById(personId)) {
+        if (!userRepository.existsById(personId)) {
             throw IdException.noElementWithId("Person", personId);
         }
     }

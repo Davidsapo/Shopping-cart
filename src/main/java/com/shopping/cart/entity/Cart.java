@@ -22,7 +22,7 @@ public class Cart {
     private Long id;
 
     @OneToOne(mappedBy = "cart")
-    private Person person;
+    private User user;
 
     @OneToMany(mappedBy = "cart", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CartItem> cartItems;

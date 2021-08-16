@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 @Table(uniqueConstraints = @UniqueConstraint(
         name = "email_unique",
         columnNames = "email"))
-public class Person {
+public class User {
 
     @Id
     @SequenceGenerator(

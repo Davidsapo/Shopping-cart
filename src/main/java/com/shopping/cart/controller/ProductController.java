@@ -12,7 +12,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/product")
+@RequestMapping("shopping-cart/product")
 public class ProductController {
 
     private final ProductService productService;
