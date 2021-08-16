@@ -6,6 +6,7 @@ import com.shopping.cart.request.UpdateUserRequest;
 import com.shopping.cart.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,6 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/list")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<UserGetDTO>> list() {
         return ResponseEntity.ok(userService.getAllUsers());
     }

@@ -12,6 +12,7 @@ import com.shopping.cart.service.UserService;
 import com.shopping.cart.validator.IdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -44,18 +45,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserGetDTO> getAllUsers() {
         return mapper.personsToPersonGetDTOs(userRepository.findAll());
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getUser(Long id) {
         idValidator.validPersonId(id);
         return userRepository.getById(id);
     }
 
-    @Transactional
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserGetDTO updateUser(Long id, UpdateUserRequest updateUserRequest) {
         idValidator.validPersonId(id);
         User user = userRepository.getById(id);

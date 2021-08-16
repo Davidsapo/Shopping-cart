@@ -4,8 +4,10 @@ import com.shopping.cart.dto.ProductGetDTO;
 import com.shopping.cart.dto.ProductPostDTO;
 import com.shopping.cart.request.UpdateProductRequest;
 import com.shopping.cart.service.ProductService;
+import com.shopping.cart.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

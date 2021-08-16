@@ -11,6 +11,7 @@ import com.shopping.cart.service.UserService;
 import com.shopping.cart.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CartDTO fetchCart(Long personId) {
         return mapper.cartToCartDTO(userService.getUser(personId).getCart());
     }

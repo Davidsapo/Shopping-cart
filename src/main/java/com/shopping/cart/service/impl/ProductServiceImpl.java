@@ -11,6 +11,7 @@ import com.shopping.cart.service.ProductService;
 import com.shopping.cart.validator.IdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -42,24 +43,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductGetDTO> getProducts() {
         return mapper.productsToProductGetDTOs(productRepository.findAll());
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Product getProduct(Long id) {
         idValidator.validProductId(id);
         return productRepository.getById(id);
     }
 
-    @Transactional
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ProductGetDTO updateProduct(Long id, UpdateProductRequest updateProductRequest) {
         idValidator.validProductId(id);
         Product productFromDB = productRepository.getById(id);
         String updatedName = updateProductRequest.getName();
         BigDecimal updatedPrice = updateProductRequest.getPrice();
-        if (!productFromDB.getName().equalsIgnoreCase(updatedName) && productRepository.existsByNameIgnoreCase(updateProductRequest.getName())) {
+        if (!productFromDB.getName().equalsIgnoreCase(updatedName) &&
+                productRepository.existsByNameIgnoreCase(updateProductRequest.getName())) {
             throw new NonUniqueValueException("Product", "name", updateProductRequest.getName());
         }
         if (Objects.nonNull(updatedName)) {
