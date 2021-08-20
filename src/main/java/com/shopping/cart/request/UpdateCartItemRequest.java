@@ -10,10 +10,6 @@ public class UpdateCartItemRequest {
 
     @NotNull
     @Min(1)
-    private Long personId;
-
-    @NotNull
-    @Min(1)
     private Long cartItemId;
 
     @NotNull

@@ -2,12 +2,12 @@ package com.shopping.cart.controller;
 
 import com.shopping.cart.dto.CartDTO;
 import com.shopping.cart.request.AddToCartRequest;
-import com.shopping.cart.request.DeleteCartItemRequest;
 import com.shopping.cart.request.UpdateCartItemRequest;
 import com.shopping.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,28 +24,33 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<CartDTO> fetchCart(@RequestParam Long personId) {
-        return ResponseEntity.ok(cartService.fetchCart(personId));
+    @PreAuthorize("hasAuthority('MANAGE_CART')")
+    public ResponseEntity<CartDTO> fetchCart() {
+        return ResponseEntity.ok(cartService.fetchCart());
     }
 
     @PostMapping("/add-product")
+    @PreAuthorize("hasAuthority('MANAGE_CART')")
     public ResponseEntity<CartDTO> addProduct(@RequestBody @Valid AddToCartRequest request) {
-        return ResponseEntity.ok(cartService.addProduct(request.getPersonID(), request.getProductID(), request.getQuantity()));
+        return ResponseEntity.ok(cartService.addProduct(request.getProductID(), request.getQuantity()));
     }
 
     @PutMapping("/update-cart-item")
+    @PreAuthorize("hasAuthority('MANAGE_CART')")
     public ResponseEntity<CartDTO> updateCartItem(@RequestBody @Valid UpdateCartItemRequest request) {
-        return ResponseEntity.ok(cartService.updateCartItem(request.getPersonId(), request.getCartItemId(), request.getQuantity()));
+        return ResponseEntity.ok(cartService.updateCartItem(request.getCartItemId(), request.getQuantity()));
     }
 
-    @DeleteMapping("/delete-cart-item")
-    public ResponseEntity<CartDTO> deleteCartItem(@RequestBody @Valid DeleteCartItemRequest request) {
-        return ResponseEntity.ok(cartService.deleteCartItem(request.getPersonId(), request.getCartItemId()));
+    @DeleteMapping("/delete-cart-item/{cartItemId}")
+    @PreAuthorize("hasAuthority('MANAGE_CART')")
+    public ResponseEntity<CartDTO> deleteCartItem(@PathVariable("cartItemId") Long id) {
+        return ResponseEntity.ok(cartService.deleteCartItem(id));
     }
 
     @DeleteMapping("/empty")
-    public ResponseEntity<HttpStatus> emptyCart(@RequestParam Long personId){
-        cartService.emptyCart(personId);
+    @PreAuthorize("hasAuthority('MANAGE_CART')")
+    public ResponseEntity<HttpStatus> emptyCart() {
+        cartService.emptyCart();
         return ResponseEntity.ok().build();
     }
 

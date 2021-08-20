@@ -9,13 +9,16 @@ import java.util.List;
 
 public interface UserService {
 
-    UserGetDTO addUser(UserPostDTO userPostDTO);
+    UserGetDTO registerNewUser(UserPostDTO userPostDTO);
 
     List<UserGetDTO> getAllUsers();
 
-    User getUser(Long id);
+    User getLoggedInUser();
+
+    UserGetDTO getLoggedInUserDTO();
 
     UserGetDTO updateUser(Long id, UpdateUserRequest updateUserRequest);
 
     void deleteUser(Long id);
+
 }

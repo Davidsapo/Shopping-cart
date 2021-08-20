@@ -11,7 +11,6 @@ import com.shopping.cart.service.UserService;
 import com.shopping.cart.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -35,14 +34,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional(readOnly = true)
-    public CartDTO fetchCart(Long personId) {
-        return mapper.cartToCartDTO(userService.getUser(personId).getCart());
+    public CartDTO fetchCart() {
+        return mapper.cartToCartDTO(userService.getLoggedInUser().getCart());
     }
 
     @Override
     @Transactional
-    public CartDTO addProduct(Long personID, Long productID, Integer quantity) {
-        User user = userService.getUser(personID);
+    public CartDTO addProduct(Long productID, Integer quantity) {
+        User user = userService.getLoggedInUser();
         Cart cart = user.getCart();
         Product product = productService.getProduct(productID);
 
@@ -65,8 +64,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDTO updateCartItem(Long personID, Long cartItemId, Integer quantity) {
-        Cart cart = userService.getUser(personID).getCart();
+    public CartDTO updateCartItem(Long cartItemId, Integer quantity) {
+        Cart cart = userService.getLoggedInUser().getCart();
         CartItem cartItem = cart.getCartItems()
                 .stream()
                 .filter(item -> Objects.equals(item.getId(), cartItemId))
@@ -79,8 +78,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartDTO deleteCartItem(Long personID, Long cartItemId) {
-        Cart cart = userService.getUser(personID).getCart();
+    public CartDTO deleteCartItem(Long cartItemId) {
+        Cart cart = userService.getLoggedInUser().getCart();
         if (!cart.getCartItems().removeIf(item -> Objects.equals(item.getId(), cartItemId))) {
             throw new NoSuchElementException("No cart item with id: " + cartItemId);
         }
@@ -90,8 +89,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void emptyCart(Long personID) {
-        Cart cart = userService.getUser(personID).getCart();
+    public void emptyCart() {
+        Cart cart = userService.getLoggedInUser().getCart();
         cart.getCartItems().clear();
         cart.setTotalPrice(BigDecimal.ZERO);
     }

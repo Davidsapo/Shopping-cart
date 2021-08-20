@@ -10,10 +10,6 @@ public class AddToCartRequest {
 
     @NotNull
     @Min(1)
-    private Long personID;
-
-    @NotNull
-    @Min(1)
     private Long productID;
 
     @NotNull

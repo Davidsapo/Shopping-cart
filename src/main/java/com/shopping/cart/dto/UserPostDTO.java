@@ -21,4 +21,8 @@ public class UserPostDTO {
     @Email(message = "Invalid email address.")
     private String email;
 
+    @NotNull(message = "Password required")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$)[a-zA-Z1-9]{4,8}$", message = "Password must contains at least one letters and digit and must be at least 4 characters.")
+    private String password;
+
 }

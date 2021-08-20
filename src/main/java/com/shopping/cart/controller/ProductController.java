@@ -4,10 +4,9 @@ import com.shopping.cart.dto.ProductGetDTO;
 import com.shopping.cart.dto.ProductPostDTO;
 import com.shopping.cart.request.UpdateProductRequest;
 import com.shopping.cart.service.ProductService;
-import com.shopping.cart.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,21 +24,25 @@ public class ProductController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('MANAGE_PRODUCTS')")
     public ResponseEntity<ProductGetDTO> add(@RequestBody @Valid ProductPostDTO productPostDTO) {
         return ResponseEntity.ok(productService.createProduct(productPostDTO));
     }
 
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('READ_PRODUCTS')")
     public ResponseEntity<List<ProductGetDTO>> list() {
         return ResponseEntity.ok(productService.getProducts());
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_PRODUCTS')")
     public ResponseEntity<ProductGetDTO> update(@PathVariable("id") Long id, @RequestBody @Valid UpdateProductRequest updateProductRequest) {
         return ResponseEntity.ok(productService.updateProduct(id, updateProductRequest));
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_PRODUCTS')")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         productService.delete(id);
         return ResponseEntity.ok("Product deleted successfully.");

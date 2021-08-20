@@ -4,13 +4,17 @@ import com.shopping.cart.dto.UserGetDTO;
 import com.shopping.cart.dto.UserPostDTO;
 import com.shopping.cart.entity.Cart;
 import com.shopping.cart.entity.User;
+import com.shopping.cart.enums.Role;
 import com.shopping.cart.exception.exceptions.NonUniqueValueException;
 import com.shopping.cart.mapper.Mapper;
 import com.shopping.cart.repository.UserRepository;
 import com.shopping.cart.request.UpdateUserRequest;
 import com.shopping.cart.service.UserService;
 import com.shopping.cart.validator.IdValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,20 +31,25 @@ public class UserServiceImpl implements UserService {
 
     private final Mapper mapper;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, IdValidator idValidator, Mapper mapper) {
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, IdValidator idValidator, Mapper mapper,
+                           @Lazy BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.idValidator = idValidator;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public UserGetDTO addUser(UserPostDTO userPostDTO) {
+    public UserGetDTO registerNewUser(UserPostDTO userPostDTO) {
         if (userRepository.existsByEmailIgnoreCase(userPostDTO.getEmail())) {
             throw new NonUniqueValueException("Person", "email", userPostDTO.getEmail());
         }
         User user = mapper.personPostDTOToPerson(userPostDTO);
         user.setCart(new Cart());
+        user.setRole(Role.USER);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return mapper.personToPersonGetDto(userRepository.save(user));
     }
 
@@ -52,9 +61,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public User getUser(Long id) {
-        idValidator.validPersonId(id);
-        return userRepository.getById(id);
+    public User getLoggedInUser() {
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return userRepository.getByEmail(email);
+    }
+
+    @Override
+    public UserGetDTO getLoggedInUserDTO() {
+        return mapper.personToPersonGetDto(getLoggedInUser());
     }
 
     @Override
@@ -78,4 +92,5 @@ public class UserServiceImpl implements UserService {
         idValidator.validPersonId(id);
         userRepository.deleteById(id);
     }
+
 }

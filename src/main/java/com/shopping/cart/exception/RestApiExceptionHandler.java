@@ -4,6 +4,7 @@ import com.shopping.cart.exception.exceptions.IdException;
 import com.shopping.cart.exception.exceptions.NonUniqueValueException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,6 +39,12 @@ public class RestApiExceptionHandler {
     public ResponseEntity<RestApiException> handleNoSuchElementException(NoSuchElementException exception) {
         RestApiException restApiException = new RestApiException(HttpStatus.NOT_FOUND, exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restApiException);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<RestApiException> handleNAccessDeniedException(AccessDeniedException exception) {
+        RestApiException restApiException = new RestApiException(HttpStatus.FORBIDDEN, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(restApiException);
     }
 
     @ExceptionHandler(Exception.class)
